@@ -31,4 +31,21 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.delete("/delete", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(400).json("メールアドレスがありません");
+    }
+    const isVaild = user.password === req.body.password;
+    if (!isVaild) {
+      return res.status(400).json("パスワードが違います");
+    }
+    await user.deleteOne();
+    return res.status(200).json("アカウントを削除しました");
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
 module.exports = router;
